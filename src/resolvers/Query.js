@@ -1,7 +1,7 @@
 import getUserId from '../utils/getUserId'
 
 const Query = {
-  users(parent, args, { prisma }, info) {
+  async users(parent, args, { prisma }, info) {
     const opArgs = {
       first: args.first,
       skip: args.skip,
@@ -18,8 +18,10 @@ const Query = {
         ]
       }
     }
+    const users = await prisma.query.users(opArgs, info)
+    console.log('>>>-----> users: ', users)
 
-    return prisma.query.users(opArgs, info)
+    return users
   },
 
   posts(parent, args, { prisma }, info) {
