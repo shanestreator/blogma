@@ -5,7 +5,7 @@ const generateToken = userId => {
     {
       userId
     },
-    process.env.PRISMA_SECRET,
+    process.env.JWT_SECRET,
     {
       expiresIn: '7d'
     }
