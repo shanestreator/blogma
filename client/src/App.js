@@ -39,7 +39,7 @@ const client = new ApolloClient({
   cache
 })
 
-console.log('client: ', client)
+// console.log('client: ', client)
 
 class App extends Component {
   render() {

@@ -1,26 +1,13 @@
 import React, { Component } from 'react'
 import gql from 'graphql-tag'
 import { Query } from 'react-apollo'
+import GET_POSTS from '../graphql/query/getPosts'
 
 const GET_USERS = gql`
   query {
     users {
       id
       name
-    }
-  }
-`
-
-const GET_POSTS = gql`
-  query {
-    posts {
-      id
-      title
-      body
-      published
-      user {
-        name
-      }
     }
   }
 `

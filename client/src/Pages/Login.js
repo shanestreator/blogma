@@ -1,9 +1,11 @@
 import React, { Component } from 'react'
 import gql from 'graphql-tag'
 import { Mutation } from 'react-apollo'
+import { graphql, compose } from 'react-apollo'
+import getAuth from '../graphql/state/getAuth'
 import TextFieldGroup from '../Components/TextFieldGroup'
 
-export default class Login extends Component {
+class Login extends Component {
   state = {
     email: '',
     password: ''
@@ -18,9 +20,9 @@ export default class Login extends Component {
   onSubmit = evt => {
     evt.preventDefault()
 
-    const loginUser = gql`
+    const token = gql`
       mutation {
-        login(data: { email: "shane@gmail.com", password: "shane1234" }) {
+        login(data: { email: this.state.email, password: this.state.password }) {
           user {
             id
             name
@@ -31,9 +33,13 @@ export default class Login extends Component {
         }
       }
     `
+
+    localStorage.setItem('token', token)
   }
 
   render() {
+    console.log('props: ', this.props)
+
     return (
       <div className="vh-100 login__background-image">
         <div className="dark-overlay">
@@ -87,3 +93,11 @@ export default class Login extends Component {
     )
   }
 }
+
+export default compose(
+  graphql(getAuth, {
+    props: ({ data: { auth } }) => ({
+      auth
+    })
+  })
+)(Login)
