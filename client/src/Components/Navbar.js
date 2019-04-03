@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom'
 export default class Navbar extends Component {
   render() {
     return (
-      <nav className="navbar navbar-expand-md navbar-dark bg-info row d-flex justify-content-between">
+      <nav className="sticky-top navbar navbar-expand-md navbar-dark bg-info d-flex justify-content-between">
         <a className="col navbar-brand" href="/">
           Blogma
         </a>

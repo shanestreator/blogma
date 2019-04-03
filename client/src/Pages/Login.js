@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import gql from 'graphql-tag'
-import { Mutation } from 'react-apollo'
-import { graphql, compose } from 'react-apollo'
-import getAuth from '../graphql/state/getAuth'
+
 import TextFieldGroup from '../Components/TextFieldGroup'
 
 class Login extends Component {
@@ -41,9 +40,9 @@ class Login extends Component {
     console.log('props: ', this.props)
 
     return (
-      <div className="vh-100 login__background-image">
+      <div className="vh-100 login__background-image d-flex">
         <div className="dark-overlay">
-          <div className="py-3 py-sm-4" />
+          <div className="py-3 py-sm-4 px-0 mx-0" />
           <div
             className="container card text-white border-0 mt-5"
             style={{
@@ -94,10 +93,6 @@ class Login extends Component {
   }
 }
 
-export default compose(
-  graphql(getAuth, {
-    props: ({ data: { auth } }) => ({
-      auth
-    })
-  })
-)(Login)
+const mapState = ({ auth, errors }) => ({ auth, errors })
+
+export default connect(mapState)(Login)
