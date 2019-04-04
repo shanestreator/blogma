@@ -1,13 +1,19 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import gql from 'graphql-tag'
-
+import { Mutation } from 'react-apollo'
+import history from '../history'
+import { JWT_TOKEN } from '../constants'
+import {
+  SIGNUP_MUTATION,
+  LOGIN_MUTATION
+} from '../graphql/mutation/loginMutations'
 import TextFieldGroup from '../Components/TextFieldGroup'
 
 class Login extends Component {
   state = {
+    login: true,
     email: '',
-    password: ''
+    password: '',
+    name: ''
   }
 
   onChange = evt => {
@@ -18,26 +24,11 @@ class Login extends Component {
 
   onSubmit = evt => {
     evt.preventDefault()
-
-    const token = gql`
-      mutation {
-        login(data: { email: this.state.email, password: this.state.password }) {
-          user {
-            id
-            name
-            email
-            password
-          }
-          token
-        }
-      }
-    `
-
-    localStorage.setItem('token', token)
   }
 
   render() {
-    console.log('props: ', this.props)
+    const { login, email, password, name } = this.state
+    // console.log('state: ', this.state)
 
     return (
       <div className="vh-100 login__background-image d-flex">
@@ -56,33 +47,106 @@ class Login extends Component {
               onSubmit={this.onSubmit}
             >
               <div className="col-12">
-                <h5 className="card-title text-center mb-0">Login to Blogma</h5>
+                <h5 className="card-title text-center mb-0">
+                  {login ? 'Login | Blogma' : 'Signup | Blogma'}
+                </h5>
               </div>
 
-              <div className="col-12 login__input-field">
-                <TextFieldGroup
-                  placeholder="Email"
-                  name="email"
-                  value={this.state.email}
-                  onChange={this.onChange}
-                />
-              </div>
+              {login ? (
+                <React.Fragment>
+                  <div className="col-12 login__input-field">
+                    <TextFieldGroup
+                      placeholder="Email"
+                      name="email"
+                      value={this.state.email}
+                      onChange={this.onChange}
+                    />
+                  </div>
+
+                  <div className="col-12 login__input-field">
+                    <TextFieldGroup
+                      placeholder="Password"
+                      name="password"
+                      value={this.state.password}
+                      onChange={this.onChange}
+                    />
+                  </div>
+                </React.Fragment>
+              ) : (
+                <React.Fragment>
+                  <div className="col-12 login__input-field">
+                    <TextFieldGroup
+                      placeholder="Name"
+                      name="name"
+                      value={this.state.name}
+                      onChange={this.onChange}
+                    />
+                  </div>
+
+                  <div className="col-12 login__input-field">
+                    <TextFieldGroup
+                      placeholder="Email"
+                      name="email"
+                      value={this.state.email}
+                      onChange={this.onChange}
+                    />
+                  </div>
+
+                  <div className="col-12 login__input-field">
+                    <TextFieldGroup
+                      placeholder="Password"
+                      name="password"
+                      value={this.state.password}
+                      onChange={this.onChange}
+                    />
+                  </div>
+                </React.Fragment>
+              )}
 
               <div className="col-12 login__input-field">
-                <TextFieldGroup
-                  placeholder="Password"
-                  name="password"
-                  value={this.state.password}
-                  onChange={this.onChange}
-                />
-              </div>
-
-              <div className="col-12 login__input-field">
-                <button
-                  type="submit"
-                  className="btn btn-light form-control py-1"
+                <Mutation
+                  mutation={login ? LOGIN_MUTATION : SIGNUP_MUTATION}
+                  variables={{ email, password, name }}
+                  onCompleted={data => this._confirm(data)}
                 >
-                  Login
+                  {(mutation, result) => {
+                    const { data, client, loading, error, called } = result
+                    // console.log('mutation: ', mutation)
+                    // console.log('result: ', result)
+
+                    client.cache.writeData({
+                      data: {
+                        isLoggedIn: !!localStorage.getItem('token'),
+                        cartItems: []
+                      }
+                    })
+
+                    // console.log('cache here: ', client.cache)
+
+                    return (
+                      <button
+                        className={
+                          login
+                            ? 'btn btn-info form-control py-1'
+                            : 'btn btn-success form-control py-1'
+                        }
+                        onClick={mutation}
+                      >
+                        {login ? 'Login' : 'Create Acount'}
+                      </button>
+                    )
+                  }}
+                </Mutation>
+              </div>
+
+              <div className="col-12 text-center">
+                <button
+                  className="btn btn-link text-white"
+                  onClick={() => {
+                    this.setState({ login: !login })
+                  }}
+                >
+                  {login ? 'Sign up for Blogma' : 'Login to existing account'}
                 </button>
               </div>
             </form>
@@ -91,8 +155,18 @@ class Login extends Component {
       </div>
     )
   }
+
+  _confirm = async data => {
+    // console.log('data: ', data)
+    const { token } = this.state.login ? data.login : data.signup
+    this._saveUserData(token)
+    history.push(`/`)
+    window.location.reload(true)
+  }
+
+  _saveUserData = token => {
+    localStorage.setItem(JWT_TOKEN, token)
+  }
 }
 
-const mapState = ({ auth, errors }) => ({ auth, errors })
-
-export default connect(mapState)(Login)
+export default Login
