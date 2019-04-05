@@ -21,7 +21,7 @@ export const LOGIN_MUTATION = gql`
 export default class LoginOrSignup extends Component {
   render() {
     const { login, email, password, name } = this.props.parentState
-    console.log('this.props: ', this.props.parentState)
+    // console.log('this.props: ', this.props.parentState)
     return (
       <Mutation
         mutation={login ? LOGIN_MUTATION : SIGNUP_MUTATION}

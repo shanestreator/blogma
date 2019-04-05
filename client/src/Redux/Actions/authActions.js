@@ -1,20 +1,55 @@
 import jwt_decode from 'jwt-decode'
-import setAuthToken from '../../Utils/setAuthToken'
+import {
+  GET_ERRORS,
+  SET_CURRENT_USER,
+  SIGNUP_USER,
+  LOGIN_USER,
+  LOGOUT_USER
+} from './types'
 
-// Types
-import { GET_ERRORS, SET_CURRENT_USER } from './types'
-
-// Create New User
-export const createUser = (userData, history) => dispatch => {}
-
-// Login - Get User Token
-export const loginUser = (userData, history) => dispatch => {}
-
-// Set logged in user
-export const setCurrentUser = decoded => ({
-  type: SET_CURRENT_USER,
-  payload: decoded
+// -------------------------- SIGNUP --------------------------
+export const signupUser = () => ({
+  type: SIGNUP_USER
 })
 
-// Log user out
-export const logoutUser = () => dispatch => {}
+export const createUser = token => async dispatch => {
+  try {
+    if (token) {
+      dispatch(signupUser())
+    }
+  } catch (error) {
+    console.log('ERROR: ', error)
+  }
+}
+
+// -------------------------- LOGIN --------------------------
+export const loginAuth = () => ({
+  type: LOGIN_USER
+})
+
+// Login - Get User Token
+export const loginUser = token => async dispatch => {
+  try {
+    if (token) {
+      dispatch(loginAuth())
+    }
+  } catch (error) {
+    console.log('ERROR: ', error)
+  }
+}
+
+// -------------------------- LOGOUT --------------------------
+export const logoutAuth = () => ({
+  type: LOGOUT_USER
+})
+
+// Login - Get User Token
+export const logoutUser = token => async dispatch => {
+  try {
+    if (token) {
+      dispatch(logoutAuth())
+    }
+  } catch (error) {
+    console.log('ERROR: ', error)
+  }
+}

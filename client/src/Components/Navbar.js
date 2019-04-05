@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { JWT_TOKEN } from '../constants'
+import { logoutUser } from '../Redux/Actions/authActions'
 
 class Navbar extends Component {
   state = {
@@ -9,6 +10,7 @@ class Navbar extends Component {
 
   render() {
     console.log('Navbar Props: ', this.props)
+    const { auth } = this.props
 
     return (
       <nav className="sticky-top navbar navbar-expand-md navbar-dark bg-info d-flex justify-content-between">
@@ -43,19 +45,20 @@ class Navbar extends Component {
             >
               About
             </a>
-            {this.state.loggedIn ? (
+            {!auth.isAuthenticated && (
               <a
                 className="nav-item nav-link d-flex justify-content-center"
                 href="/login"
               >
                 Login
               </a>
-            ) : (
+            )}
+            {auth.isAuthenticated && (
               <a
                 className="nav-item nav-link d-flex justify-content-center"
                 onClick={() => {
-                  this.context.logout()
                   localStorage.removeItem(JWT_TOKEN)
+                  this.props.logoutUser()
                 }}
                 href="/login"
               >
@@ -71,4 +74,7 @@ class Navbar extends Component {
 
 const mapState = ({ auth, errors }) => ({ auth, errors })
 
-export default connect(null)(Navbar)
+export default connect(
+  mapState,
+  { logoutUser }
+)(Navbar)

@@ -1,9 +1,11 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 
 import history from '../history'
 import { JWT_TOKEN } from '../constants'
 import TextFieldGroup from '../Components/TextFieldGroup'
 import LoginOrSignup from '../graphql/mutation/LoginOrSignup'
+import { loginUser } from '../Redux/Actions/authActions'
 
 class Login extends Component {
   state = {
@@ -24,6 +26,7 @@ class Login extends Component {
   }
 
   render() {
+    console.log('login.props: ', this.props)
     const { login } = this.state
 
     return (
@@ -126,12 +129,18 @@ class Login extends Component {
   _confirm = async data => {
     const { token } = this.state.login ? data.login : data.createUser
     this._saveUserData(token)
+    this.props.loginUser(token)
+    history.push('/dashboard')
   }
 
   _saveUserData = token => {
-    this.context.login(token)
     localStorage.setItem(JWT_TOKEN, token)
   }
 }
 
-export default Login
+const mapState = ({ auth, errors }) => ({ auth, errors })
+
+export default connect(
+  mapState,
+  { loginUser }
+)(Login)
