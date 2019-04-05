@@ -1,12 +1,9 @@
 import React, { Component } from 'react'
-import { Mutation } from 'react-apollo'
+
 import history from '../history'
 import { JWT_TOKEN } from '../constants'
-import {
-  SIGNUP_MUTATION,
-  LOGIN_MUTATION
-} from '../graphql/mutation/loginMutations'
 import TextFieldGroup from '../Components/TextFieldGroup'
+import LoginOrSignup from '../graphql/mutation/LoginOrSignup'
 
 class Login extends Component {
   state = {
@@ -27,8 +24,7 @@ class Login extends Component {
   }
 
   render() {
-    const { login, email, password, name } = this.state
-    // console.log('state: ', this.state)
+    const { login } = this.state
 
     return (
       <div className="vh-100 login__background-image d-flex">
@@ -104,39 +100,10 @@ class Login extends Component {
               )}
 
               <div className="col-12 login__input-field">
-                <Mutation
-                  mutation={login ? LOGIN_MUTATION : SIGNUP_MUTATION}
-                  variables={{ email, password, name }}
-                  onCompleted={data => this._confirm(data)}
-                >
-                  {(mutation, result) => {
-                    const { data, client, loading, error, called } = result
-                    // console.log('mutation: ', mutation)
-                    // console.log('result: ', result)
-
-                    client.cache.writeData({
-                      data: {
-                        isLoggedIn: !!localStorage.getItem('token'),
-                        cartItems: []
-                      }
-                    })
-
-                    // console.log('cache here: ', client.cache)
-
-                    return (
-                      <button
-                        className={
-                          login
-                            ? 'btn btn-info form-control py-1'
-                            : 'btn btn-success form-control py-1'
-                        }
-                        onClick={mutation}
-                      >
-                        {login ? 'Login' : 'Create Acount'}
-                      </button>
-                    )
-                  }}
-                </Mutation>
+                <LoginOrSignup
+                  parentState={this.state}
+                  _confirm={this._confirm}
+                />
               </div>
 
               <div className="col-12 text-center">
@@ -157,14 +124,12 @@ class Login extends Component {
   }
 
   _confirm = async data => {
-    // console.log('data: ', data)
-    const { token } = this.state.login ? data.login : data.signup
+    const { token } = this.state.login ? data.login : data.createUser
     this._saveUserData(token)
-    history.push(`/`)
-    window.location.reload(true)
   }
 
   _saveUserData = token => {
+    this.context.login(token)
     localStorage.setItem(JWT_TOKEN, token)
   }
 }

@@ -1,32 +1,14 @@
 import React, { Component } from 'react'
-import { Query, ApolloProvider } from 'react-apollo'
-import gql from 'graphql-tag'
+import { connect } from 'react-redux'
 import { JWT_TOKEN } from '../constants'
-
-const IS_LOGGED_IN = gql`
-  query IsUserLoggedIn {
-    isLoggedIn @client
-  }
-`
 
 class Navbar extends Component {
   state = {
-    authToken: null
-  }
-
-  componentWillMount() {
-    const authToken = localStorage.getItem(JWT_TOKEN)
-
-    if (authToken) {
-      return this.setState({ authToken })
-    } else {
-      return this.setState({ authToken: null })
-    }
+    loggedIn: false
   }
 
   render() {
-    // const { authToken } = this.state
-    // console.log('Navbar Render', this)
+    console.log('Navbar Props: ', this.props)
 
     return (
       <nav className="sticky-top navbar navbar-expand-md navbar-dark bg-info d-flex justify-content-between">
@@ -55,37 +37,31 @@ class Navbar extends Component {
             >
               Home
             </a>
-
             <a
               className="nav-item nav-link d-flex justify-content-center"
               href="#"
             >
               About
             </a>
-
-            <Query query={IS_LOGGED_IN}>
-              {({ data }) => {
-                console.log('data: ', data)
-                return !data.isLoggedIn ? (
-                  <a
-                    className="nav-item nav-link d-flex justify-content-center"
-                    href="/login"
-                  >
-                    Login
-                  </a>
-                ) : (
-                  <a
-                    className="nav-item nav-link d-flex justify-content-center"
-                    onClick={() => {
-                      localStorage.removeItem(JWT_TOKEN)
-                    }}
-                    href="/login"
-                  >
-                    Logout
-                  </a>
-                )
-              }}
-            </Query>
+            {this.state.loggedIn ? (
+              <a
+                className="nav-item nav-link d-flex justify-content-center"
+                href="/login"
+              >
+                Login
+              </a>
+            ) : (
+              <a
+                className="nav-item nav-link d-flex justify-content-center"
+                onClick={() => {
+                  this.context.logout()
+                  localStorage.removeItem(JWT_TOKEN)
+                }}
+                href="/login"
+              >
+                Logout
+              </a>
+            )}
           </div>
         </div>
       </nav>
@@ -93,4 +69,6 @@ class Navbar extends Component {
   }
 }
 
-export default Navbar
+const mapState = ({ auth, errors }) => ({ auth, errors })
+
+export default connect(null)(Navbar)

@@ -5,6 +5,7 @@ import hashPassword from '../utils/hashPassword'
 
 const Mutation = {
   async createUser(parent, args, { prisma }, info) {
+    console.log('>>>-----> args: ', args)
     const password = await hashPassword(args.data.password)
 
     const user = await prisma.mutation.createUser({
