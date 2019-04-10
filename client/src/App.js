@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import { Router, Route } from 'react-router-dom'
-import { ApolloProvider } from 'react-apollo'
-import ApolloClient from 'apollo-boost'
+import { Router, Route, Switch } from 'react-router-dom'
+import { ApolloProvider, Query } from 'react-apollo'
+import ApolloClient, { HttpLink, InMemoryCache, gql } from 'apollo-boost'
 import { Provider } from 'react-redux'
 
 import store from './Redux/store'
@@ -9,42 +9,35 @@ import history from './history'
 import Navbar from './Components/Navbar'
 import Home from './Pages/Home'
 import Login from './Pages/Login'
+import NewPost from './Pages/NewPost'
 import Dashboard from './Pages/Dashboard'
+import Post from './Pages/Post'
 import './App.css'
 
-const token = localStorage.getItem('token')
+const defaultState = {
+  isAuthorized: false,
+  token: null,
+  isEditMode: false
+}
 
 const client = new ApolloClient({
   uri: 'http://localhost:4000/',
-  headers: {
-    Authorization: `Bearer ${token}`
+  clientState: {
+    defaults: defaultState,
+    resolvers: {}
   }
+  // request: header => {
+  //   const token = defaultState.auth.token
+
+  //   header.setContext({
+  //     headers: {
+  //       authorization: token ? `Bearer ${token}` : ''
+  //     }
+  //   })
+  // }
 })
 
 class App extends Component {
-  state = {
-    auth: {
-      token: null,
-      loggedIn: false
-    }
-  }
-
-  signup = () => {
-    console.log('signup')
-  }
-
-  login = token => {
-    console.log('token: ', token)
-    if (token) {
-      this.setState({ auth: { token, loggedIn: true } })
-      history.push(`/dashboard`)
-    }
-  }
-
-  logout = () => {
-    this.setState({ auth: { token: null, loggedIn: false } })
-  }
-
   render() {
     return (
       <Provider store={store}>
@@ -52,9 +45,13 @@ class App extends Component {
           <div className="container-fluid px-0">
             <Navbar />
             <Router history={history}>
-              <Route exact path="/" component={Home} />
-              <Route exact path="/login" component={Login} />
-              <Route exact path="/Dashboard" component={Dashboard} />
+              <Switch>
+                <Route exact path="/" component={Home} />
+                <Route exact path="/post/new" component={NewPost} />
+                <Route path="/post/:id" component={Post} />
+                <Route exact path="/login" component={Login} />
+                <Route exact path="/Dashboard" component={Dashboard} />
+              </Switch>
             </Router>
           </div>
         </ApolloProvider>

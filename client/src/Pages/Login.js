@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import history from '../history'
 import { JWT_TOKEN } from '../constants'
 import TextFieldGroup from '../Components/TextFieldGroup'
-import LoginOrSignup from '../graphql/mutation/LoginOrSignup'
+import LoginOrSignup from '../GraphQL/Mutation/LoginOrSignup'
 import { loginUser } from '../Redux/Actions/authActions'
 
 class Login extends Component {
@@ -26,7 +26,6 @@ class Login extends Component {
   }
 
   render() {
-    console.log('login.props: ', this.props)
     const { login } = this.state
 
     return (
