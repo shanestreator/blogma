@@ -1,15 +1,9 @@
 import React, { Component } from 'react'
-import { Query } from 'react-apollo'
-import { connect } from 'react-redux'
+import { ApolloConsumer, Query } from 'react-apollo'
 import { JWT_TOKEN } from '../constants'
-import { logoutUser } from '../Redux/Actions/authActions'
 import { GET_AUTH } from '../GraphQL/Query/Queries'
 
 class Navbar extends Component {
-  state = {
-    loggedIn: false
-  }
-
   render() {
     return (
       <nav className="sticky-top navbar navbar-expand-md navbar-dark bg-info d-flex justify-content-between">
@@ -30,8 +24,8 @@ class Navbar extends Component {
         <Query query={GET_AUTH}>
           {({ data, loading }) => {
             if (loading) return 'Loading...'
-            const { isAuthenticated, token } = data
-            console.log('auth: ', isAuthenticated, token)
+            const { isAuthenticated } = data
+            console.log('auth: ', isAuthenticated)
             return (
               <div
                 className="col collapse navbar-collapse justify-content-end"
@@ -68,16 +62,22 @@ class Navbar extends Component {
                   )}
 
                   {isAuthenticated && (
-                    <a
-                      className="nav-item nav-link d-flex justify-content-center"
-                      onClick={() => {
-                        localStorage.removeItem(JWT_TOKEN)
-                        this.props.logoutUser()
-                      }}
-                      href="/login"
-                    >
-                      Logout
-                    </a>
+                    <ApolloConsumer>
+                      {client => (
+                        <a
+                          className="nav-item nav-link d-flex justify-content-center"
+                          onClick={() => {
+                            client.writeData({
+                              data: { isAuthenticated: false }
+                            })
+                            localStorage.removeItem(JWT_TOKEN)
+                          }}
+                          href="/login"
+                        >
+                          Logout
+                        </a>
+                      )}
+                    </ApolloConsumer>
                   )}
                 </div>
               </div>
@@ -89,9 +89,4 @@ class Navbar extends Component {
   }
 }
 
-const mapState = ({ auth, errors }) => ({ auth, errors })
-
-export default connect(
-  mapState,
-  { logoutUser }
-)(Navbar)
+export default Navbar

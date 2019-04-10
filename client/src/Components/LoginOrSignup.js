@@ -1,23 +1,6 @@
 import React, { Component } from 'react'
 import { ApolloConsumer, Mutation } from 'react-apollo'
-import gql from 'graphql-tag'
-
-export const SIGNUP_MUTATION = gql`
-  mutation createUser($email: String!, $password: String!, $name: String!) {
-    createUser(data: { email: $email, password: $password, name: $name }) {
-      token
-    }
-  }
-`
-
-export const LOGIN_MUTATION = gql`
-  mutation login($email: String!, $password: String!) {
-    login(data: { email: $email, password: $password }) {
-      token
-    }
-  }
-`
-console.log('ApolloConsumer: ', ApolloConsumer)
+import { SIGNUP_MUTATION, LOGIN_MUTATION } from '../GraphQL/Mutation/Mutations'
 
 export default class LoginOrSignup extends Component {
   render() {
@@ -40,7 +23,6 @@ export default class LoginOrSignup extends Component {
                       : 'btn btn-success form-control py-1'
                   }
                   onClick={() => {
-                    console.log('client: ', client)
                     client.writeData({ data: { isAuthenticated: true } })
                     return mutation()
                   }}
