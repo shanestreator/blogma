@@ -2,6 +2,7 @@ import React from 'react'
 
 const TextAreaFieldGroup = ({
   name,
+  label,
   placeholder,
   value,
   error,
@@ -9,7 +10,8 @@ const TextAreaFieldGroup = ({
   onChange
 }) => {
   return (
-    <div className="form-group">
+    <div className="form-group mb-0">
+      {label && <label htmlFor={label}>{label}</label>}
       <textarea
         className={
           error
@@ -20,6 +22,7 @@ const TextAreaFieldGroup = ({
         name={name}
         value={value}
         onChange={onChange}
+        style={{ height: '400px' }}
       />
       {info && <small className="form-text text-muted">{info}</small>}
       {error && <div className="invalid-feedback">{error}</div>}

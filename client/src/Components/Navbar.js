@@ -22,10 +22,12 @@ class Navbar extends Component {
           <span className="navbar-toggler-icon" />
         </button>
         <Query query={GET_AUTH}>
-          {({ data, loading }) => {
+          {({ data, loading, error }) => {
             if (loading) return 'Loading...'
+            if (error) {
+              console.error('Error: ', error)
+            }
             const { isAuthenticated } = data
-            console.log('auth: ', isAuthenticated)
             return (
               <div
                 className="col collapse navbar-collapse justify-content-end"

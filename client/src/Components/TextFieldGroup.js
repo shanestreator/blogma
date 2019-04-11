@@ -2,6 +2,7 @@ import React from 'react'
 
 const TextFieldGroup = ({
   name,
+  label,
   placeholder,
   value,
   error,
@@ -12,6 +13,7 @@ const TextFieldGroup = ({
 }) => {
   return (
     <div className="form-group mb-0">
+      {label && <label htmlFor={label}>{label}</label>}
       <input
         type={type}
         className={

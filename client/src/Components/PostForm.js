@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import history from '../history'
 import TextFieldGroup from '../Components/TextFieldGroup'
 import TextAreaFieldGroup from '../Components/TextAreaFieldGroup'
 
@@ -60,6 +61,8 @@ export default class PostForm extends Component {
           placeholder="Title"
         />
 
+        <div className="my-4" />
+
         <TextAreaFieldGroup
           onChange={this.onChange}
           value={body}
@@ -75,12 +78,21 @@ export default class PostForm extends Component {
             onClick={() => {
               this.setState({ published: !published })
             }}
-            // id="defaultCheck1"
           />
           <label className="form-check-label">Publish Post</label>
         </div>
 
-        <button type="submit">Submit</button>
+        <button
+          className="button__background"
+          type="submit"
+          onClick={() => {
+            setTimeout(() => {
+              history.push('/dashboard')
+            }, 500)
+          }}
+        >
+          {id ? 'Update' : 'Submit'}
+        </button>
       </form>
     )
   }

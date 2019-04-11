@@ -7,10 +7,17 @@ export const GET_AUTH = gql`
 `
 
 export const GET_ME = gql`
-  query {
+  query me {
     me {
       id
       name
+      email
+      posts {
+        id
+        title
+        body
+        published
+      }
     }
   }
 `
@@ -22,6 +29,9 @@ export const GET_POST = gql`
       title
       body
       published
+      user {
+        name
+      }
     }
   }
 `
